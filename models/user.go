@@ -4,8 +4,9 @@ import "github.com/jinzhu/gorm"
 
 type User struct {
 	gorm.Model
-	ID int
 
-	Username string
-	Password string
+	Username    string `gorm:"not null,unique"`
+	Email       string `gorm:"not null,unique"`
+	Password    string `gorm:"not null"`
+	OsuPassword string `gorm:"not null"`
 }
