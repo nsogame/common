@@ -7,12 +7,14 @@ import (
 )
 
 type Client struct {
-	uuid uuid.UUID
+	Uuid   uuid.UUID
+	UserID uint32
+	Rank   uint32
 }
 
 func (client *Client) Serialize() (repr []byte) {
 	buf := new(bytes.Buffer)
-	buf.Write(client.uuid[:])
+	buf.Write(client.Uuid[:])
 	repr = buf.Bytes()
 	return
 }

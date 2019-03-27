@@ -1,8 +1,6 @@
 package models
 
 import (
-	"time"
-
 	"github.com/jinzhu/gorm"
 )
 
@@ -18,6 +16,5 @@ type User struct {
 
 	InGameRole int
 
-	JoinTime   time.Time `gorm:"default:CURRENT_TIMESTAMP"`
-	LastActive time.Time
+	Scores []Score `gorm:"foreignkey:UserID"`
 }
