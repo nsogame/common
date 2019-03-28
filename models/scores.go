@@ -9,7 +9,8 @@ import (
 type Score struct {
 	gorm.Model
 
-	UserID uint `sql:"type:integer REFERENCES users(id)"`
+	UserID    int64
+	BeatmapID int64
 
 	BeatmapMD5 string
 	ReplayMD5  string

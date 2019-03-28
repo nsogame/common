@@ -1,24 +1,29 @@
 package common
 
 import (
-	"bytes"
-
-	"github.com/google/uuid"
+	"github.com/Mempler/osubinary"
+	"github.com/nsogame/common/models"
 )
 
 type Client struct {
-	Uuid   uuid.UUID
-	UserID uint32
-	Rank   uint32
+	Uuid   string
+	UserID uint
+	Rank   uint
 }
 
 func (client *Client) Serialize() (repr []byte) {
-	buf := new(bytes.Buffer)
-	buf.Write(client.Uuid[:])
-	repr = buf.Bytes()
-	return
+	return osubinary.Marshal(client)
 }
 
 func DeserializeClient(repr []byte) (client Client, err error) {
+	return
+}
+
+func NewClient(uuid string, user models.User) (client Client, err error) {
+	client = Client{
+		Uuid:   uuid,
+		UserID: user.ID,
+		Rank:   user.Rank,
+	}
 	return
 }

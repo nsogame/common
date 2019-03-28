@@ -3,8 +3,9 @@ package common
 import (
 	"strings"
 
-	"git.iptq.io/nso/common/models"
 	"github.com/jinzhu/gorm"
+	"github.com/nsogame/common/models"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type DB struct {
@@ -14,13 +15,11 @@ type DB struct {
 func ConnectDB(provider string, connection string) (db *DB, err error) {
 	h, err := gorm.Open(provider, connection)
 
-	var score models.Score
-	// var scores []models.Score
-	var user models.User
 	h.AutoMigrate(
-		&models.Beatmap{},
-		&models.BeatmapSet{},
-		&score, &user,
+		models.Beatmap{},
+		models.BeatmapSet{},
+		models.Score{},
+		models.User{},
 	)
 
 	if err != nil {
@@ -29,7 +28,16 @@ func ConnectDB(provider string, connection string) (db *DB, err error) {
 	return &DB{h}, nil
 }
 
-func (db *DB) GetUser(username string) (user models.User, err error) {
+func (db *DB) Authenticate(username, password string) (err error) {
+	user, err := db.GetUserByName(username)
+	if err != nil {
+		return
+	}
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	return
+}
+
+func (db *DB) GetUserByName(username string) (user models.User, err error) {
 	err = db.Where("username = ?", strings.ToLower(username)).First(&user).Error
 	return
 }

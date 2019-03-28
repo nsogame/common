@@ -26,7 +26,7 @@ func NewRedis(addr string, pass string, db int) (rds *RedisAPI) {
 }
 
 func (rds *RedisAPI) AddClient(client *Client) (err error) {
-	_, err = rds.client.HSet(KEY_ONLINE_PLAYERS, client.Uuid.String(), client.Serialize()).Result()
+	_, err = rds.client.HSet(KEY_ONLINE_PLAYERS, client.Uuid, client.Serialize()).Result()
 	return
 }
 

@@ -15,6 +15,5 @@ type User struct {
 	OsuPassword    string `gorm:"not null"`
 
 	InGameRole int
-
-	Scores []Score `gorm:"foreignkey:UserID"`
+	Rank       uint
 }
