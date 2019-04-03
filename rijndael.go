@@ -1,7 +1,7 @@
 package common
 
-// ATENTION:
-// THIS CODE IS BASED ON https://github.com/agl/pond/tree/master/panda/rijndael
+// ATTENTION:
+// THIS CODE IS FROM https://github.com/agl/pond/tree/master/panda/rijndael
 
 import (
 	"crypto/cipher"

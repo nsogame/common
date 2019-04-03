@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/nsogame/common/models"
-	"github.com/nsogame/drift"
+	"git.iptq.io/nso/common/models"
+	"git.iptq.io/nso/drift"
 
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )

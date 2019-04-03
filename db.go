@@ -3,8 +3,8 @@ package common
 import (
 	"strings"
 
+	"git.iptq.io/nso/common/models"
 	"github.com/jinzhu/gorm"
-	"github.com/nsogame/common/models"
 	"golang.org/x/crypto/bcrypt"
 )
 

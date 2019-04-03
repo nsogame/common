@@ -1,9 +1,11 @@
 package common
 
 import (
-	"fmt"
+	"encoding/json"
+	"log"
 
 	"github.com/go-redis/redis"
+	"github.com/pkg/errors"
 )
 
 var (
@@ -26,24 +28,51 @@ func NewRedis(addr string, pass string, db int) (rds *RedisAPI) {
 }
 
 func (rds *RedisAPI) AddClient(client *Client) (err error) {
-	_, err = rds.client.HSet(KEY_ONLINE_PLAYERS, client.Uuid, client.Serialize()).Result()
+	data, err := client.Serialize()
+	if err != nil {
+		err = errors.Wrap(err, "RedisAPI.AddClient: error serializing client to json")
+		return
+	}
+
+	_, err = rds.client.HSet(KEY_ONLINE_PLAYERS, client.Uuid, data).Result()
+	return
+}
+
+func (rds *RedisAPI) GetClientByToken(token string) (client Client, err error) {
+	data, err := rds.client.HGet(KEY_ONLINE_PLAYERS, token).Result()
+	if err == redis.Nil {
+		err = errors.Errorf("RedisAPI.GetClientByToken: client with token '%s' doesn't exist", token)
+		return
+	} else if err != nil {
+		err = errors.Wrap(err, "RedisAPI.GetClientByToken: error getting client")
+		return
+	}
+
+	err = json.Unmarshal([]byte(data), &client)
+	if err != nil {
+		err = errors.Wrap(err, "RedisAPI.GetClientByToken: unmarshalling json")
+	}
 	return
 }
 
 func (rds *RedisAPI) GetOnlineClients() (clients []Client, err error) {
-	var cursor uint64
-	var keys []string
-	for {
-		var err error
-		keys, cursor, err = rds.client.HScan(KEY_ONLINE_PLAYERS, cursor, "", 40).Result()
-		if err != nil {
-			panic(err)
-		}
+	data, err := rds.client.HGetAll(KEY_ONLINE_PLAYERS).Result()
+	if err != nil {
+		return
+	}
 
-		fmt.Println(keys)
-		if cursor == 0 {
-			break
+	clients = make([]Client, len(data))
+	i := 0
+	for _, value := range data {
+		var client Client
+		err = json.Unmarshal([]byte(value), &client)
+		if err != nil {
+			log.Println("Error decoding client from Redis:", err)
+			i++
+			continue
 		}
+		clients[i] = client
+		i++
 	}
 	return
 }
